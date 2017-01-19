@@ -1,10 +1,10 @@
 package com.brianmccutchon.emaillistadder
 
-import java.io.File
 import swing._
 import swing.event._
 
 object Main extends SimpleSwingApplication {
+
   def newField = new TextField {
     columns = 15
   }
@@ -34,21 +34,10 @@ object Main extends SimpleSwingApplication {
 
   reactions += {
     case ButtonClicked(`submitButton`) | KeyReleased(_, Key.Enter, _, _) =>
-      saveEmail(nameField.text, emailField.text)
+      EmailSaver.saveEmail(nameField.text, emailField.text)
       println(nameField.text + " " + emailField.text)
       nameField.text = ""
       emailField.text = ""
-  }
-
-  def appendToFile(fname: String)(op: java.io.FileWriter => Unit) {
-    val fw = new java.io.FileWriter(fname, true)
-    try { op(fw) } finally { fw.close() }
-  }
-
-  def saveEmail(name: String, email: String): Unit = {
-    appendToFile("/Users/brianmc7/Desktop/emails.txt") { fw =>
-      fw.write(f"$name%s <$email%s>\n")
-    }
   }
 
 }
