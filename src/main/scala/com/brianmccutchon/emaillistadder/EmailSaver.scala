@@ -1,6 +1,6 @@
 package com.brianmccutchon.emaillistadder
 
-import java.io.{ File, FileWriter }
+import java.io.FileWriter
 
 object EmailSaver {
 

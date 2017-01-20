@@ -14,15 +14,12 @@ object Main extends SimpleSwingApplication {
   val submitButton = new Button("Submit")
 
   val fields = new GridPanel(2, 2) {
-    contents += new Label("Name:")
-    contents += nameField
-    contents += new Label("Email:")
-    contents += emailField
+    contents ++= Seq(new Label("Name:"), nameField,
+                     new Label("Email:"), emailField)
   }
 
   val body = new BoxPanel(Orientation.Vertical) {
-    contents += fields
-    contents += submitButton
+    contents ++= Seq(fields, submitButton)
   }
 
   def top = new MainFrame {
@@ -30,12 +27,11 @@ object Main extends SimpleSwingApplication {
     contents = body
   }
 
-  listenTo(nameField, emailField, submitButton, body, fields)
+  listenTo(submitButton)
 
   reactions += {
-    case ButtonClicked(`submitButton`) | KeyReleased(_, Key.Enter, _, _) =>
+    case ButtonClicked(`submitButton`) =>
       EmailSaver.saveEmail(nameField.text, emailField.text)
-      println(nameField.text + " " + emailField.text)
       nameField.text = ""
       emailField.text = ""
   }
