@@ -1,12 +1,14 @@
 package com.brianmccutchon.emaillistadder
 
 import java.io.FileWriter
+import resource._
 
 object EmailSaver {
 
   def appendToFile(fname: String)(op: FileWriter => Unit) {
-    val fw = new FileWriter(fname, true)
-    try { op(fw) } finally { fw.close() }
+    for {
+      fw <- managed(new FileWriter(fname, true))
+    } op(fw)
   }
 
   def saveEmail(name: String, email: String): Unit = {

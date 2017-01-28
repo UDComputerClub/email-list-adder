@@ -8,3 +8,4 @@ lazy val emailListAdder = (project in file("."))
 
 libraryDependencies +=
   "org.scala-lang.modules" % "scala-swing_2.12" % "2.0.0-M2"
+libraryDependencies += "com.jsuereth" %% "scala-arm" % "2.0"
