@@ -4,7 +4,7 @@ import swing._
 import swing.event._
 import EmailSaver.{ saveEmail, emailLooksValid }
 
-object Main extends SimpleSwingApplication {
+object ListEntryForm extends SimpleSwingApplication {
 
   /******************* Model **************************************************/
 
