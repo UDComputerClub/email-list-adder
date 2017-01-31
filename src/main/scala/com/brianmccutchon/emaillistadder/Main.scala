@@ -2,25 +2,27 @@ package com.brianmccutchon.emaillistadder
 
 import swing._
 import swing.event._
-import EmailSaver._
+import EmailSaver.{ saveEmail, emailLooksValid }
 
 object Main extends SimpleSwingApplication {
+
+  /******************* Model **************************************************/
+
+  var model = new ListEntryFormModel
+
+  /******************* View ***************************************************/
 
   def newField = new TextField {
     columns = 15
   }
 
-  var errorIsDisplayed = false
   val errText = "Looks like you have a typo. Double check!"
   val noErrText = " "
 
   val nameField = newField
   val surnameField = newField
   val emailField = newField
-  val errDisplay = new Label {
-    //override def text() = if (errorIsDisplayed) errText else ""
-    text = noErrText
-  }
+  val errDisplay = new Label(noErrText)
   val submitButton = new Button("Submit")
 
   val fields = new GridPanel(3, 2) {
@@ -40,25 +42,30 @@ object Main extends SimpleSwingApplication {
 
   listenTo(submitButton)
 
+  /******************* Controller *********************************************/
+
   reactions += {
     case ButtonClicked(`submitButton`) => {
-      val (first, last, email) = getFieldValues()
-      if (errorIsDisplayed || emailLooksValid(first, last, email)) {
+      updateModel()
+      if (model.dispErr || (emailLooksValid _).tupled(getFieldValues())) {
         doSubmit()
       } else {
-        displayError()
+        model = model.copy(dispErr = true)
       }
+      updateView()
     }
   }
 
-  def displayError(): Unit = {
-    errorIsDisplayed = true
-    errDisplay.text = errText
+  def updateModel(): Unit = {
+    val (first, last, email) = getFieldValues()
+    model = new ListEntryFormModel(first, last, email, model.dispErr)
   }
 
-  def hideError(): Unit = {
-    errorIsDisplayed = false
-    errDisplay.text = noErrText
+  def updateView(): Unit = {
+    errDisplay.text = if (model.dispErr) errText else noErrText
+    nameField.text = model.first
+    surnameField.text = model.last
+    emailField.text = model.email
   }
 
   def getFieldValues() = {
@@ -71,10 +78,7 @@ object Main extends SimpleSwingApplication {
   def doSubmit(): Unit = {
     val (first, last, email) = getFieldValues()
     saveEmail(s"$first $last", email)
-    nameField.text = ""
-    surnameField.text = ""
-    emailField.text = ""
-    hideError()
+    model = new ListEntryFormModel
   }
 
 }
